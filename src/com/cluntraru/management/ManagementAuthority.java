@@ -2,10 +2,9 @@ package com.cluntraru.management;
 
 import com.cluntraru.institution.Hospital;
 import com.cluntraru.institution.Institution;
-import com.cluntraru.institution.Pharmacy;
-import com.cluntraru.person.Person;
-import com.cluntraru.person.Pharmacist;
-import com.cluntraru.person.Physician;
+import com.cluntraru.institution.InstitutionType;
+//import com.cluntraru.institution.Pharmacy;
+import com.cluntraru.person.*;
 import com.cluntraru.prescription.Prescription;
 
 import java.util.ArrayList;
@@ -14,6 +13,8 @@ import java.util.List;
 public final class ManagementAuthority {
     private static ManagementAuthority instance;
 
+    // TODO (CL): if a thread is created that directly calls a method which needs approval, while one is called by
+    // the management authority, it can be circumvented (if they are called simultaneously)
     private boolean approvedRequest; // Makes sure that nothing changes without approval
     private InstitutionAuthority institAuthority;
     private PersonAuthority personAuthority;
@@ -58,10 +59,6 @@ public final class ManagementAuthority {
         return personAuthority.getPhysicians();
     }
 
-    public List<Pharmacist> getPharmacistList() {
-        return personAuthority.getPharmacists();
-    }
-
     public List<Prescription> getIssuedPrescriptions() {
         return prescAuthority.getAll();
     }
@@ -82,10 +79,6 @@ public final class ManagementAuthority {
         return institAuthority.getHospitals();
     }
 
-    public List<Pharmacy> getPharmacies() {
-        return institAuthority.getPharmacies();
-    }
-
     private void recordPerson(Person person) {
         personAuthority.record(person);
     }
@@ -102,7 +95,6 @@ public final class ManagementAuthority {
         try {
             personAuthority.eraseRecord(person);
         } catch (RuntimeException rte) {
-            // TODO (CL): proper error handling
             System.out.println(rte.getMessage());
         }
     }
@@ -111,7 +103,6 @@ public final class ManagementAuthority {
         try {
             institAuthority.eraseRecord(institution);
         } catch (RuntimeException rte) {
-            // TODO (CL): proper error handling
             System.out.println(rte.getMessage());
         }
     }
@@ -126,16 +117,94 @@ public final class ManagementAuthority {
     }
 
     // Requests
-    private void newInstitution(Institution institution) {
+    private Institution newInstitution(InstitutionType institutionType) {
+        Institution institution;
+        if (institutionType == InstitutionType.HOSPITAL) {
+            institution = new Hospital(this);
+        }
+        else {
+            throw new RuntimeException("Institution type " + institutionType + " cannot be created.");
+        }
+
         recordInstitution(institution);
+        return institution;
     }
 
-    private void newPerson(Person person) {
+    private Person newPerson(PersonType personType, String name) {
+        Person person;
+        if (personType == PersonType.CIVILIAN) {
+            person = new Civilian(this, name);
+        }
+        else if (personType == PersonType.PHYSICIAN) {
+            person = new Physician(this, name);
+        }
+        else {
+            throw new RuntimeException("Institution type " + personType + " cannot be created.");
+        }
+
+        recordPerson(person);
+        return person;
+    }
+
+    private void personSick(Person person, Hospital hospital) {
+        if (person instanceof Civilian) {
+            person.setSick(this, true);
+            person.setInstitution(this, hospital);
+            hospital.addPatient(this, person);
+        }
+        else if (person instanceof Physician) {
+            // For physicians, hospital parameter is ignored, they get treated where they work
+            person.setSick(this, true);
+            hospital.addPatient(this, person);
+        }
+
+        recordInstitution(hospital);
         recordPerson(person);
     }
 
-    private void transferToInstit(Person person, Institution institution) {
+    private void personHeal(Person person) {
+        person.setSick(this, false);
+        person.getInstitution().removePatient(this, person);
 
+        recordInstitution(person.getInstitution());
+        recordPerson(person);
+    }
+
+    private void personDie(Person person) {
+        person.die(this);
+        person.getInstitution().removePatient(this, person);
+
+        recordInstitution(person.getInstitution());
+        recordPerson(person);
+    }
+
+    private void personRedeemPrescription(Person person, Prescription prescription) {
+        prescription.archive(this);
+        recordPrescription(prescription);
+    }
+
+    private void institutionAddPatient(Institution institution, Person person) {
+        institution.addPatient(this, person);
+        person.setInstitution(this, institution);
+
+        recordInstitution(institution);
+        recordPerson(person);
+    }
+
+    private void institutionAddStaff(Institution institution, Person person) {
+        institution.addStaff(this, person);
+        person.setInstitution(this, institution);
+
+        recordInstitution(institution);
+        recordPerson(person);
+    }
+
+    private void institutionRemoveStaff(Institution institution, Person person) {
+        institution.removeStaff(this, person);
+        person.setInstitution(this, null);
+
+        recordInstitution(institution);
+        recordPerson(person);
     }
 
     public void assertApproval() throws RuntimeException {
@@ -144,31 +213,41 @@ public final class ManagementAuthority {
         }
     }
 
-    public void makeRequest(RequestType requestType, Object... args) {
-        // TODO (CL): implement all possible interactions here
-        // TODO (CL): mutex, only one request can be processed at a time
+    public Object makeRequest(RequestType requestType, Object... args) {
+        // TODO (CL): mutex, only one request can be processed at a time (until migrated to persistent storage)
         approvedRequest = true;
+        Object retVal = null;
         switch (requestType) {
             case NEW_PERSON:
+                retVal = newPerson((PersonType) args[0], (String) args[1]);
                 break;
             case NEW_INSTITUTION:
+                retVal = newInstitution((InstitutionType) args[0]);
                 break;
             case PERSON_SICK:
+                personSick((Person) args[0], (Hospital) args[1]);
                 break;
             case PERSON_HEAL:
+                personHeal((Person) args[0]);
                 break;
             case PERSON_DIE:
+                personDie((Person) args[0]);
                 break;
             case PERSON_REDEEM_PRESCRIPTION:
+                personRedeemPrescription((Person) args[0], (Prescription) args[1]);
                 break;
             case INSTITUTION_ADD_PATIENT:
+                institutionAddPatient((Institution) args[0], (Person) args[1]);
                 break;
             case INSTITUTION_ADD_STAFF:
+                institutionAddStaff((Institution) args[0], (Person) args[1]);
                 break;
             case INSTITUTION_REMOVE_STAFF:
+                institutionRemoveStaff((Institution) args[0], (Person) args[1]);
                 break;
         }
 
         approvedRequest = false;
+        return retVal;
     }
 }

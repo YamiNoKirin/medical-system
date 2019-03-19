@@ -14,10 +14,10 @@ abstract public class Person {
     private Institution institution;
 
     // Class specific
-    protected Person(ManagementAuthority managementAuthority, boolean isAlive, boolean isSick, String name) {
+    protected Person(ManagementAuthority managementAuthority, String name) {
         managementAuthority.assertApproval();
-        this.isAlive = isAlive;
-        this.isSick = isSick;
+        isAlive = true;
+        isSick = false;
         this.name = name;
         institution = null;
 
@@ -25,12 +25,12 @@ abstract public class Person {
         ++personCount;
     }
 
-    protected Person(ManagementAuthority managementAuthority, boolean isAlive, boolean isSick, String name, Institution institution) {
-        this(managementAuthority, isAlive, isSick, name);
+    protected Person(ManagementAuthority managementAuthority, String name, Institution institution) {
+        this(managementAuthority, name);
         this.institution = institution;
     }
 
-    protected Institution getInstitution() {
+    public Institution getInstitution() {
         return institution;
     }
 

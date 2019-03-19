@@ -4,12 +4,12 @@ import com.cluntraru.management.ManagementAuthority;
 import com.cluntraru.institution.Hospital;
 
 public class Civilian extends Person {
-    public Civilian(ManagementAuthority managementAuthority, boolean isAlive, boolean isSick, String name) {
-        super(managementAuthority, isAlive, isSick, name);
+    public Civilian(ManagementAuthority managementAuthority, String name) {
+        super(managementAuthority, name);
     }
 
-    public Civilian(ManagementAuthority managementAuthority, boolean isAlive, boolean isSick, String name, Hospital hospital) {
-        super(managementAuthority, isAlive, isSick, name, hospital);
+    public Civilian(ManagementAuthority managementAuthority, String name, Hospital hospital) {
+        super(managementAuthority, name, hospital);
     }
 
     public Hospital getHospital() {

@@ -1,9 +1,7 @@
 package com.cluntraru.management;
 
-import com.cluntraru.institution.Pharmacy;
 import com.cluntraru.person.Civilian;
 import com.cluntraru.person.Person;
-import com.cluntraru.person.Pharmacist;
 import com.cluntraru.person.Physician;
 
 import java.util.*;
@@ -13,13 +11,11 @@ public class PersonAuthority {
     private Map<Integer, Person> people;
     private Map<Integer, Civilian> civilians;
     private Map<Integer, Physician> physicians;
-    private Map<Integer, Pharmacist> pharmacists;
 
     PersonAuthority() {
         people = new TreeMap<>();
         civilians = new TreeMap<>();
         physicians = new TreeMap<>();
-        pharmacists = new TreeMap<>();
     }
 
     List<Person> getAll() {
@@ -78,10 +74,6 @@ public class PersonAuthority {
         return new ArrayList<>(physicians.values());
     }
 
-    List<Pharmacist> getPharmacists() {
-        return new ArrayList<>(pharmacists.values());
-    }
-
     void record(Person person) {
         if (people.containsKey(person.getId())) {
             updateRecord(person);
@@ -95,9 +87,6 @@ public class PersonAuthority {
         if (person instanceof Civilian) {
             removeCivilian((Civilian) person);
         }
-        else if (person instanceof Pharmacist) {
-            removePharmacist((Pharmacist) person);
-        }
         else if (person instanceof Physician) {
             removePhysician((Physician) person);
         }
@@ -110,9 +99,6 @@ public class PersonAuthority {
         if (person instanceof Civilian) {
             addCivilian((Civilian) person);
         }
-        else if (person instanceof Pharmacist) {
-            addPharmacist((Pharmacist) person);
-        }
         else if (person instanceof Physician) {
             addPhysician((Physician) person);
         }
@@ -124,9 +110,6 @@ public class PersonAuthority {
     private void updateRecord(Person person) throws RuntimeException {
         if (person instanceof Civilian) {
             updateCivilian((Civilian) person);
-        }
-        else if (person instanceof Pharmacist) {
-            updatePharmacist((Pharmacist) person);
         }
         else if (person instanceof Physician) {
             updatePhysician((Physician) person);
@@ -141,11 +124,6 @@ public class PersonAuthority {
         civilians.put(civilian.getId(), civilian);
     }
 
-    private void addPharmacist(Pharmacist pharmacist) {
-        people.put(pharmacist.getId(), pharmacist);
-        pharmacists.put(pharmacist.getId(), pharmacist);
-    }
-
     private void addPhysician(Physician physician) {
         people.put(physician.getId(), physician);
         physicians.put(physician.getId(), physician);
@@ -156,11 +134,6 @@ public class PersonAuthority {
         civilians.remove(civilian.getId());
     }
 
-    private void removePharmacist(Pharmacist pharmacist) {
-        people.remove(pharmacist.getId(), pharmacist);
-        pharmacists.remove(pharmacist.getId(), pharmacist);
-    }
-
     private void removePhysician(Physician physician) {
         people.remove(physician.getId());
         physicians.remove(physician.getId());
@@ -169,11 +142,6 @@ public class PersonAuthority {
     private void updateCivilian(Civilian civilian) {
         removeCivilian(civilian);
         addCivilian(civilian);
-    }
-
-    private void updatePharmacist(Pharmacist pharmacist) {
-        removePharmacist(pharmacist);
-        addPharmacist(pharmacist);
     }
 
     private void updatePhysician(Physician physician) {

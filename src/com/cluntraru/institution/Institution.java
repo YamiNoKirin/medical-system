@@ -15,6 +15,7 @@ abstract public class Institution {
     Institution(ManagementAuthority managementAuthority) {
         managementAuthority.assertApproval();
         staff = new TreeMap<>();
+        patients = new TreeMap<>();
 
         // TODO (CL): mutex
         ++institutionCount;
