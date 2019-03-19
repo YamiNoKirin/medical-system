@@ -1,8 +1,40 @@
 # Medical System
 Prototype for a medical system in Java
 
+## Architecture
 
-## Tasks
+#### Services
+
+- Add person to system
+- Print emitted prescriptions
+- Print sick/healthy/deceased people
+- Print civilians/doctors
+- Print institution staff
+- Print institution patients
+- Print institutions/hospitals/pharmacies
+- Print healthy/sick/deceased doctors/patients
+
+#### Actions
+- Get prescription from system (DOC)
+- Emit prescription (DOC)
+- Consult patient (DOC)
+- Redeem prescription (PERS)
+- Get sick (PERS)
+- Get healed (PERS)
+- Die (PERS)
+
+#### Classes
+- Medical administrative entity (singleton)
+- Person
+- Doctor (person)
+- Civilian (person)
+- Prescription
+- Institution
+- Hospital (institution)
+- Pharmacy (institution)
+
+
+## Info
 
 Fiecare student va lucra la un proiect individual. Proiectul este structurat în mai multe etape. 
 Conditia de punctare a proiectelor este aceea ca acestea sa nu prezinte erori de compilare si sa implementeze cerintele date. 
