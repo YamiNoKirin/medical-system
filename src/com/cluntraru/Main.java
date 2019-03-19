@@ -1,8 +1,10 @@
 package com.cluntraru;
 
+import com.cluntraru.admin_entity.AdminEntity;
+
 public class Main {
 
     public static void main(String[] args) {
-	// write your code here
+        AdminEntity adminEntity = AdminEntity.getInstance();
     }
 }
