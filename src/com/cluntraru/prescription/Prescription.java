@@ -1,8 +1,7 @@
 package com.cluntraru.prescription;
 
 import com.cluntraru.management.ManagementAuthority;
-import com.cluntraru.person.Civilian;
-import com.cluntraru.person.Physician;
+import com.cluntraru.person.Person;
 
 public class Prescription {
     private static int prescriptionCount = 0;
@@ -10,13 +9,11 @@ public class Prescription {
 
     private boolean isActive;
     private String medName;
-    private Physician issuedBy;
-    private Civilian prescribedTo;
+    private Person prescribedTo;
 
-    public Prescription(ManagementAuthority managementAuthority, String medName, Physician issuedBy, Civilian prescribedTo) {
+    public Prescription(ManagementAuthority managementAuthority, String medName, Person prescribedTo) {
         managementAuthority.assertApproval();
         this.medName = medName;
-        this.issuedBy = issuedBy;
         this.prescribedTo = prescribedTo;
         isActive = true;
 
@@ -28,11 +25,7 @@ public class Prescription {
         return medName;
     }
 
-    public Physician getIssuedBy() {
-        return issuedBy;
-    }
-
-    public Civilian getPrescribedTo() {
+    public Person getPrescribedTo() {
         return prescribedTo;
     }
 

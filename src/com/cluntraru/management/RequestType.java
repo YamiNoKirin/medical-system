@@ -3,6 +3,7 @@ package com.cluntraru.management;
 public enum RequestType {
     NEW_PERSON,
     NEW_INSTITUTION,
+    NEW_PRESCRIPTION,
     PERSON_SICK, // Person gets added to hospital and pharmacy as patient
     PERSON_HEAL, // Person gets removed from all institutions
     PERSON_DIE, // Person gets removed from all institutions

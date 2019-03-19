@@ -3,7 +3,6 @@ package com.cluntraru.management;
 import com.cluntraru.institution.Hospital;
 import com.cluntraru.institution.Institution;
 import com.cluntraru.institution.InstitutionType;
-//import com.cluntraru.institution.Pharmacy;
 import com.cluntraru.person.*;
 import com.cluntraru.prescription.Prescription;
 
@@ -146,6 +145,14 @@ public final class ManagementAuthority {
         return person;
     }
 
+    private Prescription newPrescription(String medName, Person prescribedTo) {
+        Prescription prescription = new Prescription(this, medName, prescribedTo);
+
+        recordPerson(prescribedTo);
+        recordPrescription(prescription);
+        return prescription;
+    }
+
     private void personSick(Person person, Hospital hospital) {
         if (person instanceof Civilian) {
             person.setSick(this, true);
@@ -223,6 +230,9 @@ public final class ManagementAuthority {
                 break;
             case NEW_INSTITUTION:
                 retVal = newInstitution((InstitutionType) args[0]);
+                break;
+            case NEW_PRESCRIPTION:
+                retVal = newPrescription((String) args[0], (Person) args[1]);
                 break;
             case PERSON_SICK:
                 personSick((Person) args[0], (Hospital) args[1]);
