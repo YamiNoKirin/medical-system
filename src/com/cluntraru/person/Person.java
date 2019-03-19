@@ -1,9 +1,9 @@
 package com.cluntraru.person;
 
-import com.cluntraru.admin_entity.AdminEntity;
+import com.cluntraru.management.ManagementAuthority;
 import com.cluntraru.institution.Institution;
 
-public class Person {
+abstract public class Person {
     private static int personCount = 0;
     private final int id = personCount;
 
@@ -13,8 +13,8 @@ public class Person {
     private String name;
     private Institution institution;
 
-    protected Person(AdminEntity adminEntity, boolean isAlive, boolean isSick, String name) {
-        // TODO (CL): record to adminEntity
+    protected Person(ManagementAuthority managementAuthority, boolean isAlive, boolean isSick, String name) {
+        // TODO (CL): record to managementAuthority
         this.isAlive = isAlive;
         this.isSick = isSick;
         this.name = name;
@@ -23,8 +23,8 @@ public class Person {
         ++personCount;
     }
 
-    protected Person(AdminEntity adminEntity, boolean isAlive, boolean isSick, String name, Institution institution) {
-        this(adminEntity, isAlive, isSick, name);
+    protected Person(ManagementAuthority managementAuthority, boolean isAlive, boolean isSick, String name, Institution institution) {
+        this(managementAuthority, isAlive, isSick, name);
         this.institution = institution;
     }
 
@@ -32,7 +32,7 @@ public class Person {
         return institution;
     }
 
-    void setInstitution(AdminEntity adminEntity, Institution institution) {
+    void setInstitution(ManagementAuthority managementAuthority, Institution institution) {
         // TODO (CL): record institution change
         this.institution = institution;
     }
@@ -41,7 +41,7 @@ public class Person {
         return isAlive;
     }
 
-    public void die(AdminEntity adminEntity)  {
+    public void die(ManagementAuthority managementAuthority)  {
         // TODO (CL): record
         isAlive = false;
     }
@@ -50,7 +50,7 @@ public class Person {
         return isSick;
     }
 
-    public void setSick(AdminEntity adminEntity, boolean isSick) {
+    public void setSick(ManagementAuthority managementAuthority, boolean isSick) {
         // TODO (CL): record
         this.isSick = isSick;
     }

@@ -1,10 +1,10 @@
 package com.cluntraru;
 
-import com.cluntraru.admin_entity.AdminEntity;
+import com.cluntraru.management.ManagementAuthority;
 
 public class Main {
 
     public static void main(String[] args) {
-        AdminEntity adminEntity = AdminEntity.getInstance();
+        ManagementAuthority managementAuthority = ManagementAuthority.getInstance();
     }
 }

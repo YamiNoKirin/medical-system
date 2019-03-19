@@ -1,14 +1,14 @@
 package com.cluntraru.institution;
 
-import com.cluntraru.admin_entity.AdminEntity;
+import com.cluntraru.management.ManagementAuthority;
 import com.cluntraru.person.Pharmacist;
 
 public class Pharmacy extends Institution {
-    public Pharmacy(AdminEntity adminEntity) {
-        super(adminEntity);
+    public Pharmacy(ManagementAuthority managementAuthority) {
+        super(managementAuthority);
     }
 
-    public void addPharmacist(AdminEntity adminEntity, Pharmacist pharmacist) {
-        addStaff(adminEntity, pharmacist);
+    public void addPharmacist(ManagementAuthority managementAuthority, Pharmacist pharmacist) {
+        addStaff(managementAuthority, pharmacist);
     }
 }
