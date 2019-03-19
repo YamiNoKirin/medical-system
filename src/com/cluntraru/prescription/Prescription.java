@@ -14,12 +14,13 @@ public class Prescription {
     private Civilian prescribedTo;
 
     public Prescription(ManagementAuthority managementAuthority, String medName, Physician issuedBy, Civilian prescribedTo) {
-        // TODO (CL): record to managementAuthority
+        managementAuthority.assertApproval();
         this.medName = medName;
         this.issuedBy = issuedBy;
         this.prescribedTo = prescribedTo;
         isActive = true;
 
+        // TODO (CL): mutex
         ++prescriptionCount;
     }
 
@@ -44,7 +45,7 @@ public class Prescription {
     }
 
     public void archive(ManagementAuthority managementAuthority) {
-        // TODO (CL): record
+        managementAuthority.assertApproval();
         isActive = false;
     }
 }

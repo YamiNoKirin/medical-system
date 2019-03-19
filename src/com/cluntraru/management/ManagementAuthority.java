@@ -14,6 +14,7 @@ import java.util.List;
 public final class ManagementAuthority {
     private static ManagementAuthority instance;
 
+    private boolean approvedRequest; // Makes sure that nothing changes without approval
     private InstitutionAuthority institAuthority;
     private PersonAuthority personAuthority;
     private PrescriptionAuthority prescAuthority;
@@ -22,6 +23,7 @@ public final class ManagementAuthority {
         institAuthority = new InstitutionAuthority();
         personAuthority = new PersonAuthority();
         prescAuthority = new PrescriptionAuthority();
+        approvedRequest = false;
     }
 
     public static ManagementAuthority getInstance() {
@@ -84,19 +86,19 @@ public final class ManagementAuthority {
         return institAuthority.getPharmacies();
     }
 
-    public void recordPerson(Person person) {
+    private void recordPerson(Person person) {
         personAuthority.record(person);
     }
 
-    public void recordInstitution(Institution institution) {
+    private void recordInstitution(Institution institution) {
         institAuthority.record(institution);
     }
 
-    public void recordPrescription(Prescription prescription) {
+    private void recordPrescription(Prescription prescription) {
         prescAuthority.record(prescription);
     }
 
-    public void removePerson(Person person) {
+    private void removePerson(Person person) {
         try {
             personAuthority.eraseRecord(person);
         } catch (RuntimeException rte) {
@@ -105,7 +107,7 @@ public final class ManagementAuthority {
         }
     }
 
-    public void removeInstitution(Institution institution) {
+    private void removeInstitution(Institution institution) {
         try {
             institAuthority.eraseRecord(institution);
         } catch (RuntimeException rte) {
@@ -114,12 +116,59 @@ public final class ManagementAuthority {
         }
     }
 
-    public void removePrescription(Prescription prescription) {
+    private void removePrescription(Prescription prescription) {
         try {
             prescAuthority.eraseRecord(prescription);
         } catch (RuntimeException rte) {
             // TODO (CL): proper error handling
             System.out.println(rte.getMessage());
         }
+    }
+
+    // Requests
+    private void newInstitution(Institution institution) {
+        recordInstitution(institution);
+    }
+
+    private void newPerson(Person person) {
+        recordPerson(person);
+    }
+
+    private void transferToInstit(Person person, Institution institution) {
+
+    }
+
+    public void assertApproval() throws RuntimeException {
+        if (!approvedRequest) {
+            throw new RuntimeException("Attempt to carry out request without approval!");
+        }
+    }
+
+    public void makeRequest(RequestType requestType, Object... args) {
+        // TODO (CL): implement all possible interactions here
+        // TODO (CL): mutex, only one request can be processed at a time
+        approvedRequest = true;
+        switch (requestType) {
+            case NEW_PERSON:
+                break;
+            case NEW_INSTITUTION:
+                break;
+            case PERSON_SICK:
+                break;
+            case PERSON_HEAL:
+                break;
+            case PERSON_DIE:
+                break;
+            case PERSON_REDEEM_PRESCRIPTION:
+                break;
+            case INSTITUTION_ADD_PATIENT:
+                break;
+            case INSTITUTION_ADD_STAFF:
+                break;
+            case INSTITUTION_REMOVE_STAFF:
+                break;
+        }
+
+        approvedRequest = false;
     }
 }

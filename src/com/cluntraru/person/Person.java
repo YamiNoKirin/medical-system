@@ -13,13 +13,15 @@ abstract public class Person {
     private String name;
     private Institution institution;
 
+    // Class specific
     protected Person(ManagementAuthority managementAuthority, boolean isAlive, boolean isSick, String name) {
-        // TODO (CL): record to managementAuthority
+        managementAuthority.assertApproval();
         this.isAlive = isAlive;
         this.isSick = isSick;
         this.name = name;
         institution = null;
 
+        // TODO (CL): mutex
         ++personCount;
     }
 
@@ -32,34 +34,35 @@ abstract public class Person {
         return institution;
     }
 
-    void setInstitution(ManagementAuthority managementAuthority, Institution institution) {
-        // TODO (CL): record institution change
-        this.institution = institution;
-    }
-
-    public boolean isAlive() {
-        return isAlive;
-    }
-
-    public void die(ManagementAuthority managementAuthority)  {
-        // TODO (CL): record
-        isAlive = false;
-    }
-
-    public boolean isSick() {
-        return isSick;
-    }
-
-    public void setSick(ManagementAuthority managementAuthority, boolean isSick) {
-        // TODO (CL): record
-        this.isSick = isSick;
-    }
-
+    // Other methods
     public int getId() {
         return id;
     }
 
     public String getName() {
         return name;
+    }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public boolean isSick() {
+        return isSick;
+    }
+
+    public void die(ManagementAuthority managementAuthority)  {
+        managementAuthority.assertApproval();
+        isAlive = false;
+    }
+
+    public void setSick(ManagementAuthority managementAuthority, boolean isSick) {
+        managementAuthority.assertApproval();
+        this.isSick = isSick;
+    }
+
+    public void setInstitution(ManagementAuthority managementAuthority, Institution institution) {
+        managementAuthority.assertApproval();
+        this.institution = institution;
     }
 }
