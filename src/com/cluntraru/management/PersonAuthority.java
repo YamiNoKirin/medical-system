@@ -47,7 +47,7 @@ public class PersonAuthority {
     List<Person> getSick() {
         List<Person> sickList = new ArrayList<>();
         for (Person person: people.values()) {
-            if (person.isSick()) {
+            if (person.isAlive() && person.isSick()) {
                 sickList.add(person);
             }
         }
@@ -58,7 +58,7 @@ public class PersonAuthority {
     List<Person> getHealthy() {
         List<Person> healthyList = new ArrayList<>();
         for (Person person: people.values()) {
-            if (!person.isSick()) {
+            if (person.isAlive() && !person.isSick()) {
                 healthyList.add(person);
             }
         }

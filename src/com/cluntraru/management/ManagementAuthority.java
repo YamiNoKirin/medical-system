@@ -74,15 +74,27 @@ public final class ManagementAuthority {
         return institAuthority.getHospitals();
     }
 
-    private void recordPerson(Person person) {
+    private void recordPerson(Person person) throws NullPointerException {
+        if (person == null) {
+            throw new NullPointerException("Person is null.");
+        }
+
         personAuthority.record(person);
     }
 
-    private void recordInstitution(Institution institution) {
+    private void recordInstitution(Institution institution) throws NullPointerException {
+        if (institution == null) {
+            throw new NullPointerException("Institution is null.");
+        }
+
         institAuthority.record(institution);
     }
 
-    private void recordPrescription(Prescription prescription) {
+    private void recordPrescription(Prescription prescription) throws NullPointerException {
+        if (prescription == null) {
+            throw new NullPointerException("Prescription is null.");
+        }
+
         prescAuthority.record(prescription);
     }
 
@@ -179,18 +191,22 @@ public final class ManagementAuthority {
     }
 
     private void personHeal(Person person) {
-        person.setSick(false);
-        person.getInstitution().removePatient(person);
+        if (person.getInstitution() != null) {
+            person.getInstitution().removePatient(person);
+            recordInstitution(person.getInstitution());
+        }
 
-        recordInstitution(person.getInstitution());
+        person.setSick(false);
         recordPerson(person);
     }
 
     private void personDie(Person person) {
-        person.die();
-        person.getInstitution().removePatient(person);
+        if (person.getInstitution() != null) {
+            person.getInstitution().removePatient(person);
+            recordInstitution(person.getInstitution());
+        }
 
-        recordInstitution(person.getInstitution());
+        person.die();
         recordPerson(person);
     }
 
