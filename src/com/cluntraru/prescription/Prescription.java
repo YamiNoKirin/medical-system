@@ -11,8 +11,7 @@ public class Prescription {
     private String medName;
     private Person prescribedTo;
 
-    public Prescription(ManagementAuthority managementAuthority, String medName, Person prescribedTo) {
-        managementAuthority.assertApproval();
+    public Prescription(String medName, Person prescribedTo) {
         this.medName = medName;
         this.prescribedTo = prescribedTo;
         isActive = true;
@@ -37,8 +36,7 @@ public class Prescription {
         return id;
     }
 
-    public void archive(ManagementAuthority managementAuthority) {
-        managementAuthority.assertApproval();
+    public void archive() {
         isActive = false;
     }
 }

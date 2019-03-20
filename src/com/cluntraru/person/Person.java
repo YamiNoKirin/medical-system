@@ -1,6 +1,5 @@
 package com.cluntraru.person;
 
-import com.cluntraru.management.ManagementAuthority;
 import com.cluntraru.institution.Institution;
 
 abstract public class Person {
@@ -14,8 +13,7 @@ abstract public class Person {
     private Institution institution;
 
     // Class specific
-    protected Person(ManagementAuthority managementAuthority, String name) {
-        managementAuthority.assertApproval();
+    protected Person(String name) {
         isAlive = true;
         isSick = false;
         this.name = name;
@@ -25,8 +23,8 @@ abstract public class Person {
         ++personCount;
     }
 
-    protected Person(ManagementAuthority managementAuthority, String name, Institution institution) {
-        this(managementAuthority, name);
+    protected Person(String name, Institution institution) {
+        this(name);
         this.institution = institution;
     }
 
@@ -51,18 +49,15 @@ abstract public class Person {
         return isSick;
     }
 
-    public void die(ManagementAuthority managementAuthority)  {
-        managementAuthority.assertApproval();
+    public void die()  {
         isAlive = false;
     }
 
-    public void setSick(ManagementAuthority managementAuthority, boolean isSick) {
-        managementAuthority.assertApproval();
+    public void setSick(boolean isSick) {
         this.isSick = isSick;
     }
 
-    public void setInstitution(ManagementAuthority managementAuthority, Institution institution) {
-        managementAuthority.assertApproval();
+    public void setInstitution(Institution institution) {
         this.institution = institution;
     }
 }

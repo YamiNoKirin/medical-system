@@ -1,6 +1,5 @@
 package com.cluntraru.institution;
 
-import com.cluntraru.management.ManagementAuthority;
 import com.cluntraru.person.Person;
 
 import java.util.*;
@@ -12,8 +11,7 @@ abstract public class Institution {
     private Map<Integer, Person> staff;
     private Map<Integer, Person> patients;
 
-    Institution(ManagementAuthority managementAuthority) {
-        managementAuthority.assertApproval();
+    Institution() {
         staff = new TreeMap<>();
         patients = new TreeMap<>();
 
@@ -33,23 +31,19 @@ abstract public class Institution {
         return id;
     }
 
-    public void addStaff(ManagementAuthority managementAuthority, Person person) {
-        managementAuthority.assertApproval();
+    public void addStaff(Person person) {
         staff.put(person.getId(), person);
     }
 
-    public void removeStaff(ManagementAuthority managementAuthority, Person person) {
-        managementAuthority.assertApproval();
+    public void removeStaff(Person person) {
         staff.remove(person.getId());
     }
 
-    public void addPatient(ManagementAuthority managementAuthority, Person person) {
-        managementAuthority.assertApproval();
+    public void addPatient(Person person) {
         patients.put(person.getId(), person);
     }
 
-    public void removePatient(ManagementAuthority managementAuthority, Person person) {
-        managementAuthority.assertApproval();
+    public void removePatient(Person person) {
         patients.remove(person.getId(), person);
     }
 }

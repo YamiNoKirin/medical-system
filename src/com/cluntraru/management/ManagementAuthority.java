@@ -12,9 +12,6 @@ import java.util.List;
 public final class ManagementAuthority {
     private static ManagementAuthority instance;
 
-    // TODO (CL): if a thread is created that directly calls a method which needs approval, while one is called by
-    // the management authority, it can be circumvented (if they are called simultaneously)
-    private boolean approvedRequest; // Makes sure that nothing changes without approval
     private InstitutionAuthority institAuthority;
     private PersonAuthority personAuthority;
     private PrescriptionAuthority prescAuthority;
@@ -23,7 +20,6 @@ public final class ManagementAuthority {
         institAuthority = new InstitutionAuthority();
         personAuthority = new PersonAuthority();
         prescAuthority = new PrescriptionAuthority();
-        approvedRequest = false;
     }
 
     public static ManagementAuthority getInstance() {
@@ -119,7 +115,7 @@ public final class ManagementAuthority {
     private Institution newInstitution(InstitutionType institutionType) {
         Institution institution;
         if (institutionType == InstitutionType.HOSPITAL) {
-            institution = new Hospital(this);
+            institution = new Hospital();
         }
         else {
             throw new RuntimeException("Institution type " + institutionType + " cannot be created.");
@@ -129,16 +125,29 @@ public final class ManagementAuthority {
         return institution;
     }
 
-    private Person newPerson(PersonType personType, String name) {
+    private Person newPerson(PersonType personType, String name, Institution institution) throws RuntimeException {
         Person person;
+        if (name == null) {
+            throw new RuntimeException("Person cannot be created without a name.");
+        }
+
         if (personType == PersonType.CIVILIAN) {
-            person = new Civilian(this, name);
+            if (institution == null) {
+                person = new Civilian(name);
+            }
+            else {
+                person = new Civilian(name, (Hospital) institution);
+            }
         }
         else if (personType == PersonType.PHYSICIAN) {
-            person = new Physician(this, name);
+            if (institution == null) {
+                throw new RuntimeException("Physician cannot be created without a hospital.");
+            }
+
+            person = new Physician(name, (Hospital) institution);
         }
         else {
-            throw new RuntimeException("Institution type " + personType + " cannot be created.");
+            throw new RuntimeException("Person type " + personType + " cannot be created.");
         }
 
         recordPerson(person);
@@ -146,7 +155,7 @@ public final class ManagementAuthority {
     }
 
     private Prescription newPrescription(String medName, Person prescribedTo) {
-        Prescription prescription = new Prescription(this, medName, prescribedTo);
+        Prescription prescription = new Prescription(medName, prescribedTo);
 
         recordPerson(prescribedTo);
         recordPrescription(prescription);
@@ -155,14 +164,14 @@ public final class ManagementAuthority {
 
     private void personSick(Person person, Hospital hospital) {
         if (person instanceof Civilian) {
-            person.setSick(this, true);
-            person.setInstitution(this, hospital);
-            hospital.addPatient(this, person);
+            person.setSick(true);
+            person.setInstitution(hospital);
+            hospital.addPatient(person);
         }
         else if (person instanceof Physician) {
             // For physicians, hospital parameter is ignored, they get treated where they work
-            person.setSick(this, true);
-            hospital.addPatient(this, person);
+            person.setSick(true);
+            hospital.addPatient(person);
         }
 
         recordInstitution(hospital);
@@ -170,63 +179,61 @@ public final class ManagementAuthority {
     }
 
     private void personHeal(Person person) {
-        person.setSick(this, false);
-        person.getInstitution().removePatient(this, person);
+        person.setSick(false);
+        person.getInstitution().removePatient(person);
 
         recordInstitution(person.getInstitution());
         recordPerson(person);
     }
 
     private void personDie(Person person) {
-        person.die(this);
-        person.getInstitution().removePatient(this, person);
+        person.die();
+        person.getInstitution().removePatient(person);
 
         recordInstitution(person.getInstitution());
         recordPerson(person);
     }
 
     private void personRedeemPrescription(Person person, Prescription prescription) {
-        prescription.archive(this);
+        prescription.archive();
         recordPrescription(prescription);
     }
 
     private void institutionAddPatient(Institution institution, Person person) {
-        institution.addPatient(this, person);
-        person.setInstitution(this, institution);
+        institution.addPatient(person);
+        person.setInstitution(institution);
 
         recordInstitution(institution);
         recordPerson(person);
     }
 
     private void institutionAddStaff(Institution institution, Person person) {
-        institution.addStaff(this, person);
-        person.setInstitution(this, institution);
+        institution.addStaff(person);
+        person.setInstitution(institution);
 
         recordInstitution(institution);
         recordPerson(person);
     }
 
     private void institutionRemoveStaff(Institution institution, Person person) {
-        institution.removeStaff(this, person);
-        person.setInstitution(this, null);
+        institution.removeStaff(person);
+        person.setInstitution(null);
 
         recordInstitution(institution);
         recordPerson(person);
     }
 
-    public void assertApproval() throws RuntimeException {
-        if (!approvedRequest) {
-            throw new RuntimeException("Attempt to carry out request without approval!");
-        }
-    }
-
     public Object makeRequest(RequestType requestType, Object... args) {
         // TODO (CL): mutex, only one request can be processed at a time (until migrated to persistent storage)
-        approvedRequest = true;
         Object retVal = null;
         switch (requestType) {
             case NEW_PERSON:
-                retVal = newPerson((PersonType) args[0], (String) args[1]);
+                Institution institution = null;
+                if (args.length >= 3) {
+                    institution = (Institution) args[2];
+                }
+
+                retVal = newPerson((PersonType) args[0], (String) args[1], institution);
                 break;
             case NEW_INSTITUTION:
                 retVal = newInstitution((InstitutionType) args[0]);
@@ -257,7 +264,6 @@ public final class ManagementAuthority {
                 break;
         }
 
-        approvedRequest = false;
         return retVal;
     }
 }

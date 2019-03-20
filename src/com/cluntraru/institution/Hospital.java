@@ -4,11 +4,11 @@ import com.cluntraru.management.ManagementAuthority;
 import com.cluntraru.person.Physician;
 
 public class Hospital extends Institution {
-    public Hospital(ManagementAuthority managementAuthority) {
-        super(managementAuthority);
+    public Hospital() {
+        super();
     }
 
-    public void addPhysician(ManagementAuthority managementAuthority, Physician physician) {
-        addStaff(managementAuthority, physician);
+    public void addPhysician(Physician physician) {
+        addStaff(physician);
     }
 }
