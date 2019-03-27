@@ -15,8 +15,11 @@ Prototype for a medical system in Java
 - Print healthy/sick/deceased doctors/patients
 
 #### Actions
-- Get prescription from system (DOC)
-- Emit prescription (DOC)
+- Create person
+- Create institution
+- Remove person
+- Remove institution
+- Issue prescription
 - Consult patient (DOC)
 - Redeem prescription (PERS)
 - Get sick (PERS)
@@ -24,15 +27,13 @@ Prototype for a medical system in Java
 - Die (PERS)
 
 #### Classes
-- Medical administrative entity (singleton)
+- Medical management authority (singleton)
 - Person
 - Doctor (person)
 - Civilian (person)
 - Prescription
 - Institution
 - Hospital (institution)
-- Pharmacy (institution)
-
 
 ## Info
 
