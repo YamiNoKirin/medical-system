@@ -17,8 +17,9 @@ Prototype for a medical system in Java
 #### Actions
 - Create person
 - Create institution
-- Remove person
-- Remove institution
+- Remove staff (INSTIT)
+- Add staff (INSTIT)
+- Add patient (INSTIT)
 - Issue prescription
 - Consult patient (DOC)
 - Redeem prescription (PERS)

@@ -187,6 +187,8 @@ public final class ManagementAuthority {
             }
             else {
                 person = new Civilian(name, (Hospital) institution);
+                institution.addPatient(person);
+                recordInstitution(institution);
             }
         }
         else if (personType == PersonType.PHYSICIAN) {
@@ -195,6 +197,8 @@ public final class ManagementAuthority {
             }
 
             person = new Physician(name, (Hospital) institution);
+            institution.addStaff(person);
+            recordInstitution(institution);
         }
         else {
             throw new RuntimeException("Person type " + personType + " cannot be created.");
@@ -261,8 +265,12 @@ public final class ManagementAuthority {
         recordPerson(person);
     }
 
-    private void institutionAddStaff(Institution institution, Person person) {
+    private void institutionAddStaff(Institution institution, Person person) throws RuntimeException {
         institution.addStaff(person);
+        if (person.getInstitution() != null) {
+            throw new RuntimeException("Cannot add person that is already employed as staff.");
+        }
+
         person.setInstitution(institution);
 
         recordInstitution(institution);

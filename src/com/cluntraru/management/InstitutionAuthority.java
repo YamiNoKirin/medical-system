@@ -2,6 +2,7 @@ package com.cluntraru.management;
 
 import com.cluntraru.institution.Hospital;
 import com.cluntraru.institution.Institution;
+import com.cluntraru.person.Person;
 
 import java.util.ArrayList;
 import java.util.List;

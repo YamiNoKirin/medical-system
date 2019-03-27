@@ -57,6 +57,10 @@ public class Main {
 
         Person healedPerson = mgmtAuthority.getRandomPerson();
         Hospital hospital = mgmtAuthority.getRandomHospital();
+        while (hospital.getStaff().isEmpty()) {
+            hospital = mgmtAuthority.getRandomHospital();
+        }
+
         mgmtAuthority.makeRequest(RequestType.PERSON_SICK, healedPerson, hospital);
         mgmtAuthority.makeRequest(RequestType.PERSON_HEAL, healedPerson);
 
@@ -76,5 +80,21 @@ public class Main {
         System.out.println("Prescriptions: " + mgmtAuthority.getIssuedPrescriptions().toString());
         System.out.println("Active prescriptions: " + mgmtAuthority.getActivePrescriptions().toString());
         System.out.println("Archived prescriptions: " + mgmtAuthority.getArchivedPrescriptions().toString());
+        
+        // Change staff
+        Hospital hospital1 = mgmtAuthority.getRandomHospital();
+        while (hospital1 == hospital) { // Compares reference
+            hospital1 = mgmtAuthority.getRandomHospital();
+        }
+
+        System.out.println("Hospital staff: " + hospital.getStaff());
+        System.out.println("Other hospital staff: " + hospital1.getStaff());
+
+        Person staffMember = hospital.getStaff().get(0);
+        mgmtAuthority.makeRequest(RequestType.INSTITUTION_REMOVE_STAFF, hospital, staffMember);
+        mgmtAuthority.makeRequest(RequestType.INSTITUTION_ADD_STAFF, hospital1, staffMember);
+
+        System.out.println("After move - hospital staff: " + hospital.getStaff());
+        System.out.println("After move - other hospital staff: " + hospital1.getStaff());
     }
 }
