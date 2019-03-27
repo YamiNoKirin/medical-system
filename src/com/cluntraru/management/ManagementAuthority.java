@@ -6,7 +6,6 @@ import com.cluntraru.institution.InstitutionType;
 import com.cluntraru.person.*;
 import com.cluntraru.prescription.Prescription;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class ManagementAuthority {
@@ -54,6 +53,10 @@ public final class ManagementAuthority {
         return personAuthority.getPhysicians();
     }
 
+    public List<Civilian> getCivilians() {
+        return personAuthority.getCivilians();
+    }
+
     public List<Prescription> getIssuedPrescriptions() {
         return prescAuthority.getAll();
     }
@@ -72,6 +75,41 @@ public final class ManagementAuthority {
 
     public List<Hospital> getHospitals() {
         return institAuthority.getHospitals();
+    }
+
+    // Get random
+    public Hospital getRandomHospital() {
+        List<Hospital> hospitals = institAuthority.getHospitals();
+        int idx = idxInRange(hospitals.size());
+        return hospitals.get(idx);
+    }
+
+    public Person getRandomPerson() {
+        List<Person> people = personAuthority.getAll();
+        int idx = idxInRange(people.size());
+        return people.get(idx);
+    }
+
+    public Person getRandomHealthyPerson() {
+        List<Person> people = personAuthority.getHealthy();
+        int idx = idxInRange(people.size());
+        return people.get(idx);
+    }
+
+    public Person getRandomLivePerson() {
+        List<Person> people = personAuthority.getAlive();
+        int idx = idxInRange(people.size());
+        return people.get(idx);
+    }
+
+    public Prescription getRandomActivePrescription() {
+        List<Prescription> prescriptions = prescAuthority.getActive();
+        int idx = idxInRange(prescriptions.size());
+        return prescriptions.get(idx);
+    }
+
+    private int idxInRange(int range) {
+        return (int) Math.floor(Math.random() * (range - 1));
     }
 
     private void recordPerson(Person person) throws NullPointerException {

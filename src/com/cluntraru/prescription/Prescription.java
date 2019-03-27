@@ -1,6 +1,5 @@
 package com.cluntraru.prescription;
 
-import com.cluntraru.management.ManagementAuthority;
 import com.cluntraru.person.Person;
 
 public class Prescription {
@@ -18,6 +17,10 @@ public class Prescription {
 
         // TODO (CL): mutex
         ++prescriptionCount;
+    }
+
+    public String toString() {
+        return medName;
     }
 
     public String getMedicineName() {

@@ -1,6 +1,5 @@
 package com.cluntraru.person;
 
-import com.cluntraru.management.ManagementAuthority;
 import com.cluntraru.institution.Hospital;
 
 public class Physician extends Person {

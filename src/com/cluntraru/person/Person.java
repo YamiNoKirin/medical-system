@@ -32,6 +32,10 @@ abstract public class Person {
         return institution;
     }
 
+    public String toString() {
+        return name;
+    }
+
     // Other methods
     public int getId() {
         return id;
