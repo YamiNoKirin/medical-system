@@ -24,7 +24,7 @@ abstract public class Institution {
     }
 
     public List<Person> getPatients() {
-        return new ArrayList<>(staff.values());
+        return new ArrayList<>(patients.values());
     }
 
     public int getId() {

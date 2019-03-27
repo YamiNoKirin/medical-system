@@ -80,7 +80,7 @@ public class Main {
         System.out.println("Prescriptions: " + mgmtAuthority.getIssuedPrescriptions().toString());
         System.out.println("Active prescriptions: " + mgmtAuthority.getActivePrescriptions().toString());
         System.out.println("Archived prescriptions: " + mgmtAuthority.getArchivedPrescriptions().toString());
-        
+
         // Change staff
         Hospital hospital1 = mgmtAuthority.getRandomHospital();
         while (hospital1 == hospital) { // Compares reference
@@ -96,5 +96,7 @@ public class Main {
 
         System.out.println("After move - hospital staff: " + hospital.getStaff());
         System.out.println("After move - other hospital staff: " + hospital1.getStaff());
+
+        System.out.println("Hospital patients: " + hospital.getPatients());
     }
 }
