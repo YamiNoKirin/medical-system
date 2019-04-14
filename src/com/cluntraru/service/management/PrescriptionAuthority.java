@@ -1,6 +1,6 @@
-package com.cluntraru.management;
+package com.cluntraru.service.management;
 
-import com.cluntraru.prescription.Prescription;
+import com.cluntraru.model.prescription.Prescription;
 
 import java.util.ArrayList;
 import java.util.List;

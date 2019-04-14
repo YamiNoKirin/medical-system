@@ -1,10 +1,13 @@
-package com.cluntraru.management;
+package com.cluntraru.service.management;
 
-import com.cluntraru.institution.Hospital;
-import com.cluntraru.institution.Institution;
-import com.cluntraru.institution.InstitutionType;
-import com.cluntraru.person.*;
-import com.cluntraru.prescription.Prescription;
+import com.cluntraru.model.institution.Hospital;
+import com.cluntraru.model.institution.Institution;
+import com.cluntraru.model.institution.InstitutionType;
+import com.cluntraru.model.person.Civilian;
+import com.cluntraru.model.person.Person;
+import com.cluntraru.model.person.PersonType;
+import com.cluntraru.model.person.Physician;
+import com.cluntraru.model.prescription.Prescription;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
-package com.cluntraru.prescription;
+package com.cluntraru.model.prescription;
 
-import com.cluntraru.person.Person;
+import com.cluntraru.model.person.Person;
 
 public class Prescription {
     private static int prescriptionCount = 0;

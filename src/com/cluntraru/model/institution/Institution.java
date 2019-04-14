@@ -1,6 +1,6 @@
-package com.cluntraru.institution;
+package com.cluntraru.model.institution;
 
-import com.cluntraru.person.Person;
+import com.cluntraru.model.person.Person;
 
 import java.util.*;
 

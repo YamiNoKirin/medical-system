@@ -1,12 +1,12 @@
 package com.cluntraru;
 
-import com.cluntraru.institution.Hospital;
-import com.cluntraru.institution.InstitutionType;
-import com.cluntraru.management.ManagementAuthority;
-import com.cluntraru.management.RequestType;
-import com.cluntraru.person.Person;
-import com.cluntraru.person.PersonType;
-import com.cluntraru.prescription.Prescription;
+import com.cluntraru.model.institution.Hospital;
+import com.cluntraru.model.institution.InstitutionType;
+import com.cluntraru.service.management.ManagementAuthority;
+import com.cluntraru.service.management.RequestType;
+import com.cluntraru.model.person.Person;
+import com.cluntraru.model.person.PersonType;
+import com.cluntraru.model.prescription.Prescription;
 
 public class Main {
 

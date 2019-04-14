@@ -1,4 +1,4 @@
-package com.cluntraru.institution;
+package com.cluntraru.model.institution;
 
 public enum InstitutionType {
     HOSPITAL,

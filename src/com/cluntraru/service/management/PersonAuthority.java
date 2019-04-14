@@ -1,8 +1,8 @@
-package com.cluntraru.management;
+package com.cluntraru.service.management;
 
-import com.cluntraru.person.Civilian;
-import com.cluntraru.person.Person;
-import com.cluntraru.person.Physician;
+import com.cluntraru.model.person.Civilian;
+import com.cluntraru.model.person.Person;
+import com.cluntraru.model.person.Physician;
 
 import java.util.*;
 

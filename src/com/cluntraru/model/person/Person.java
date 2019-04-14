@@ -1,6 +1,6 @@
-package com.cluntraru.person;
+package com.cluntraru.model.person;
 
-import com.cluntraru.institution.Institution;
+import com.cluntraru.model.institution.Institution;
 
 abstract public class Person {
     private static int personCount = 0;

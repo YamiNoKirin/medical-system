@@ -1,4 +1,4 @@
-package com.cluntraru.institution;
+package com.cluntraru.model.institution;
 
 public class Hospital extends Institution {
     public Hospital() {

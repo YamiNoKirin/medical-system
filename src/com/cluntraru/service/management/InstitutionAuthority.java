@@ -1,8 +1,7 @@
-package com.cluntraru.management;
+package com.cluntraru.service.management;
 
-import com.cluntraru.institution.Hospital;
-import com.cluntraru.institution.Institution;
-import com.cluntraru.person.Person;
+import com.cluntraru.model.institution.Hospital;
+import com.cluntraru.model.institution.Institution;
 
 import java.util.ArrayList;
 import java.util.List;

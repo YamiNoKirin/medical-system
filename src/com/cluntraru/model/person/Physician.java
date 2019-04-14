@@ -1,13 +1,13 @@
-package com.cluntraru.person;
+package com.cluntraru.model.person;
 
-import com.cluntraru.institution.Hospital;
+import com.cluntraru.model.institution.Hospital;
 
-public class Civilian extends Person {
-    public Civilian(String name) {
+public class Physician extends Person {
+    public Physician(String name) {
         super(name);
     }
 
-    public Civilian(String name, Hospital hospital) {
+    public Physician(String name, Hospital hospital) {
         super(name, hospital);
     }
 
