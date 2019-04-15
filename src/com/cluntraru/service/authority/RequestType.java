@@ -1,4 +1,4 @@
-package com.cluntraru.service.management;
+package com.cluntraru.service.authority;
 
 public enum RequestType {
     NEW_PERSON,

@@ -1,4 +1,4 @@
-package com.cluntraru.service.management;
+package com.cluntraru.service.authority;
 
 import com.cluntraru.model.person.Civilian;
 import com.cluntraru.model.person.Person;
@@ -8,9 +8,9 @@ import java.util.*;
 
 public class PersonAuthority {
     // Key is Id
-    private Map<Integer, Person> people;
-    private Map<Integer, Civilian> civilians;
-    private Map<Integer, Physician> physicians;
+    private Map<UUID, Person> people;
+    private Map<UUID, Civilian> civilians;
+    private Map<UUID, Physician> physicians;
 
     PersonAuthority() {
         people = new TreeMap<>();
@@ -66,6 +66,14 @@ public class PersonAuthority {
         return healthyList;
     }
 
+    Person getPerson(UUID uuid) {
+        if (uuid != null && people.containsKey(uuid)) {
+            return people.get(uuid);
+        }
+
+        return null;
+    }
+
     List<Civilian> getCivilians() {
         return new ArrayList<>(civilians.values());
     }
@@ -75,7 +83,7 @@ public class PersonAuthority {
     }
 
     void record(Person person) {
-        if (people.containsKey(person.getId())) {
+        if (people.containsKey(person.getUUID())) {
             updateRecord(person);
         }
         else {
@@ -120,23 +128,23 @@ public class PersonAuthority {
     }
 
     private void addCivilian(Civilian civilian) {
-        people.put(civilian.getId(), civilian);
-        civilians.put(civilian.getId(), civilian);
+        people.put(civilian.getUUID(), civilian);
+        civilians.put(civilian.getUUID(), civilian);
     }
 
     private void addPhysician(Physician physician) {
-        people.put(physician.getId(), physician);
-        physicians.put(physician.getId(), physician);
+        people.put(physician.getUUID(), physician);
+        physicians.put(physician.getUUID(), physician);
     }
 
     private void removeCivilian(Civilian civilian) {
-        people.remove(civilian.getId());
-        civilians.remove(civilian.getId());
+        people.remove(civilian.getUUID());
+        civilians.remove(civilian.getUUID());
     }
 
     private void removePhysician(Physician physician) {
-        people.remove(physician.getId());
-        physicians.remove(physician.getId());
+        people.remove(physician.getUUID());
+        physicians.remove(physician.getUUID());
     }
 
     private void updateCivilian(Civilian civilian) {

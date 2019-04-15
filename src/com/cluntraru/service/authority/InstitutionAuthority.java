@@ -1,17 +1,14 @@
-package com.cluntraru.service.management;
+package com.cluntraru.service.authority;
 
 import com.cluntraru.model.institution.Hospital;
 import com.cluntraru.model.institution.Institution;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class InstitutionAuthority {
     // Ordered increasingly by ID
-    private Map<Integer, Institution> institutions;
-    private Map<Integer, Hospital> hospitals;
+    private Map<UUID, Institution> institutions;
+    private Map<UUID, Hospital> hospitals;
 
     InstitutionAuthority() {
         institutions = new TreeMap<>();
@@ -26,8 +23,16 @@ public class InstitutionAuthority {
         return new ArrayList<>(hospitals.values());
     }
 
+    Institution getInstitution(UUID uuid) {
+        if (uuid != null && institutions.containsKey(uuid)) {
+            return institutions.get(uuid);
+        }
+
+        return null;
+    }
+
     void record(Institution institution) {
-        if (institutions.containsKey(institution.getId())) {
+        if (institutions.containsKey(institution.getUUID())) {
             updateRecord(institution);
         }
         else {
@@ -63,13 +68,13 @@ public class InstitutionAuthority {
     }
 
     private void addHospital(Hospital hospital) {
-        institutions.put(hospital.getId(), hospital);
-        hospitals.put(hospital.getId(), hospital);
+        institutions.put(hospital.getUUID(), hospital);
+        hospitals.put(hospital.getUUID(), hospital);
     }
 
     private void removeHospital(Hospital hospital) {
-        institutions.remove(hospital.getId());
-        hospitals.remove(hospital.getId());
+        institutions.remove(hospital.getUUID());
+        hospitals.remove(hospital.getUUID());
     }
 
     private void updateHospital(Hospital hospital) {

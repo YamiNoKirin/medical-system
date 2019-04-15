@@ -1,4 +1,4 @@
-package com.cluntraru.service.management;
+package com.cluntraru.service.authority;
 
 import com.cluntraru.model.institution.Hospital;
 import com.cluntraru.model.institution.Institution;
@@ -8,8 +8,10 @@ import com.cluntraru.model.person.Person;
 import com.cluntraru.model.person.PersonType;
 import com.cluntraru.model.person.Physician;
 import com.cluntraru.model.prescription.Prescription;
+import com.cluntraru.service.logger.Logger;
 
 import java.util.List;
+import java.util.UUID;
 
 public final class ManagementAuthority {
     private static ManagementAuthority instance;
@@ -80,6 +82,18 @@ public final class ManagementAuthority {
         return institAuthority.getHospitals();
     }
 
+    public Institution getInstitution(UUID uuid) {
+        return institAuthority.getInstitution(uuid);
+    }
+
+    public Person getPerson(UUID uuid) {
+        return personAuthority.getPerson(uuid);
+    }
+
+    public Prescription getPrescription(UUID uuid) {
+        return prescAuthority.getPrescription(uuid);
+    }
+
     // Get random
     public Hospital getRandomHospital() {
         List<Hospital> hospitals = institAuthority.getHospitals();
@@ -139,33 +153,58 @@ public final class ManagementAuthority {
         prescAuthority.record(prescription);
     }
 
-    private void removePerson(Person person) {
-        try {
-            personAuthority.eraseRecord(person);
-        } catch (RuntimeException rte) {
-            System.out.println(rte.getMessage());
-        }
+//    private void removePerson(Person person) {
+//        try {
+//            personAuthority.eraseRecord(person);
+//        } catch (RuntimeException rte) {
+//            System.out.println(rte.getMessage());
+//        }
+//    }
+//
+//    private void removeInstitution(Institution institution) {
+//        try {
+//            institAuthority.eraseRecord(institution);
+//        } catch (RuntimeException rte) {
+//            System.out.println(rte.getMessage());
+//        }
+//    }
+//
+//    private void removePrescription(Prescription prescription) {
+//        try {
+//            prescAuthority.eraseRecord(prescription);
+//        } catch (RuntimeException rte) {
+//            // TODO (CL): proper error handling
+//            System.out.println(rte.getMessage());
+//        }
+//    }
+
+    // Loading state from datamanager
+
+    public void loadInstitution(Institution instit) {
+        recordInstitution(instit);
     }
 
-    private void removeInstitution(Institution institution) {
-        try {
-            institAuthority.eraseRecord(institution);
-        } catch (RuntimeException rte) {
-            System.out.println(rte.getMessage());
+    public void loadPerson(Person person) {
+        if (person.getInstitution() != null) {
+            recordInstitution(person.getInstitution());
+            if (person instanceof Physician && !person.isSick()) {
+                person.getInstitution().addStaff(person);
+            }
+            else {
+                person.getInstitution().addPatient(person);
+            }
         }
+
+        recordPerson(person);
     }
 
-    private void removePrescription(Prescription prescription) {
-        try {
-            prescAuthority.eraseRecord(prescription);
-        } catch (RuntimeException rte) {
-            // TODO (CL): proper error handling
-            System.out.println(rte.getMessage());
-        }
+    public void loadPrescription(Prescription presc) {
+        recordPerson(presc.getPrescribedTo());
+        recordPrescription(presc);
     }
 
     // Requests
-    private Institution newInstitution(InstitutionType institutionType) {
+    private void newInstitution(InstitutionType institutionType) {
         Institution institution;
         if (institutionType == InstitutionType.HOSPITAL) {
             institution = new Hospital();
@@ -175,10 +214,9 @@ public final class ManagementAuthority {
         }
 
         recordInstitution(institution);
-        return institution;
     }
 
-    private Person newPerson(PersonType personType, String name, Institution institution) throws RuntimeException {
+    private void newPerson(PersonType personType, String name, Institution institution) throws RuntimeException {
         Person person;
         if (name == null) {
             throw new RuntimeException("Person cannot be created without a name.");
@@ -208,15 +246,13 @@ public final class ManagementAuthority {
         }
 
         recordPerson(person);
-        return person;
     }
 
-    private Prescription newPrescription(String medName, Person prescribedTo) {
+    private void newPrescription(String medName, Person prescribedTo) {
         Prescription prescription = new Prescription(medName, prescribedTo);
 
         recordPerson(prescribedTo);
         recordPrescription(prescription);
-        return prescription;
     }
 
     private void personSick(Person person, Hospital hospital) {
@@ -288,9 +324,9 @@ public final class ManagementAuthority {
         recordPerson(person);
     }
 
-    public Object makeRequest(RequestType requestType, Object... args) {
-        // TODO (CL): mutex, only one request can be processed at a time (until migrated to persistent storage)
-        Object retVal = null;
+    public void makeRequest(RequestType requestType, Object... args) {
+        Logger logger = new Logger();
+        logger.logRequest(requestType);
         switch (requestType) {
             case NEW_PERSON:
                 Institution institution = null;
@@ -298,13 +334,13 @@ public final class ManagementAuthority {
                     institution = (Institution) args[2];
                 }
 
-                retVal = newPerson((PersonType) args[0], (String) args[1], institution);
+                newPerson((PersonType) args[0], (String) args[1], institution);
                 break;
             case NEW_INSTITUTION:
-                retVal = newInstitution((InstitutionType) args[0]);
+                newInstitution((InstitutionType) args[0]);
                 break;
             case NEW_PRESCRIPTION:
-                retVal = newPrescription((String) args[0], (Person) args[1]);
+                newPrescription((String) args[0], (Person) args[1]);
                 break;
             case PERSON_SICK:
                 personSick((Person) args[0], (Hospital) args[1]);
@@ -328,7 +364,5 @@ public final class ManagementAuthority {
                 institutionRemoveStaff((Institution) args[0], (Person) args[1]);
                 break;
         }
-
-        return retVal;
     }
 }

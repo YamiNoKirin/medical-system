@@ -2,21 +2,26 @@ package com.cluntraru.model.prescription;
 
 import com.cluntraru.model.person.Person;
 
-public class Prescription {
-    private static int prescriptionCount = 0;
-    private final int id = prescriptionCount;
+import java.util.UUID;
 
+public class Prescription {
     private boolean isActive;
     private String medName;
     private Person prescribedTo;
+    private UUID uuid;
 
     public Prescription(String medName, Person prescribedTo) {
         this.medName = medName;
         this.prescribedTo = prescribedTo;
         isActive = true;
+        uuid = UUID.randomUUID();
+    }
 
-        // TODO (CL): mutex
-        ++prescriptionCount;
+    public Prescription(String medName, Person prescribedTo, boolean isActive, UUID uuid) {
+        this.medName = medName;
+        this.prescribedTo = prescribedTo;
+        this.isActive = isActive;
+        this.uuid = uuid;
     }
 
     public String toString() {
@@ -35,8 +40,8 @@ public class Prescription {
         return isActive;
     }
 
-    public int getId() {
-        return id;
+    public UUID getUUID() {
+        return uuid;
     }
 
     public void archive() {

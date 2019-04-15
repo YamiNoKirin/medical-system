@@ -2,15 +2,15 @@ package com.cluntraru.model.person;
 
 import com.cluntraru.model.institution.Institution;
 
-abstract public class Person {
-    private static int personCount = 0;
-    private final int id = personCount;
+import java.util.UUID;
 
+abstract public class Person {
     private boolean isAlive;
     private boolean isSick;
 
     private String name;
     private Institution institution;
+    private UUID uuid;
 
     // Class specific
     protected Person(String name) {
@@ -18,14 +18,20 @@ abstract public class Person {
         isSick = false;
         this.name = name;
         institution = null;
-
-        // TODO (CL): mutex
-        ++personCount;
+        uuid = UUID.randomUUID();
     }
 
     protected Person(String name, Institution institution) {
         this(name);
         this.institution = institution;
+    }
+
+    protected Person(String name, Institution institution, boolean isAlive, boolean isSick, UUID uuid) {
+        this.name = name;
+        this.institution = institution;
+        this.isAlive = isAlive;
+        this.isSick = isSick;
+        this.uuid = uuid;
     }
 
     public Institution getInstitution() {
@@ -37,8 +43,8 @@ abstract public class Person {
     }
 
     // Other methods
-    public int getId() {
-        return id;
+    public UUID getUUID() {
+        return uuid;
     }
 
     public String getName() {

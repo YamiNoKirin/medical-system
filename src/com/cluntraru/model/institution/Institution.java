@@ -5,18 +5,20 @@ import com.cluntraru.model.person.Person;
 import java.util.*;
 
 abstract public class Institution {
-    private static int institutionCount = 0;
-    private final int id = institutionCount;
+    private Map<UUID, Person> staff;
+    private Map<UUID, Person> patients;
+    private UUID uuid;
 
-    private Map<Integer, Person> staff;
-    private Map<Integer, Person> patients;
-
-    Institution() {
+    protected Institution() {
         staff = new TreeMap<>();
         patients = new TreeMap<>();
+        uuid = UUID.randomUUID();
+    }
 
-        // TODO (CL): mutex
-        ++institutionCount;
+    protected Institution(UUID uuid) {
+        staff = new TreeMap<>();
+        patients = new TreeMap<>();
+        this.uuid = uuid;
     }
 
     public List<Person> getStaff() {
@@ -27,23 +29,23 @@ abstract public class Institution {
         return new ArrayList<>(patients.values());
     }
 
-    public int getId() {
-        return id;
+    public UUID getUUID() {
+        return uuid;
     }
 
     public void addStaff(Person person) {
-        staff.put(person.getId(), person);
+        staff.put(person.getUUID(), person);
     }
 
     public void removeStaff(Person person) {
-        staff.remove(person.getId());
+        staff.remove(person.getUUID());
     }
 
     public void addPatient(Person person) {
-        patients.put(person.getId(), person);
+        patients.put(person.getUUID(), person);
     }
 
     public void removePatient(Person person) {
-        patients.remove(person.getId(), person);
+        patients.remove(person.getUUID(), person);
     }
 }

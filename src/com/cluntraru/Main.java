@@ -2,55 +2,69 @@ package com.cluntraru;
 
 import com.cluntraru.model.institution.Hospital;
 import com.cluntraru.model.institution.InstitutionType;
-import com.cluntraru.service.management.ManagementAuthority;
-import com.cluntraru.service.management.RequestType;
+import com.cluntraru.service.authority.ManagementAuthority;
+import com.cluntraru.service.authority.RequestType;
 import com.cluntraru.model.person.Person;
 import com.cluntraru.model.person.PersonType;
 import com.cluntraru.model.prescription.Prescription;
+import com.cluntraru.service.datamanager.CSVDataManager;
+import com.cluntraru.service.datamanager.IDataManager;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.rmi.server.ExportException;
 
 public class Main {
 
     public static void main(String[] args) {
+        IDataManager dataManager = new CSVDataManager();
+        try {
+            dataManager.loadData();
+        } catch (IOException e) {
+            System.err.println("Failed to load data: " + e.getMessage());
+        }
+
         ManagementAuthority mgmtAuthority = ManagementAuthority.getInstance();
 
-        // Create hospitals
-        for (int i = 0; i < 3; ++i) {
-            mgmtAuthority.makeRequest(RequestType.NEW_INSTITUTION, InstitutionType.HOSPITAL);
-        }
-        // Create physicians
-        for (Integer i = 0; i < 10; ++i) {
-            mgmtAuthority.makeRequest(RequestType.NEW_PERSON, PersonType.PHYSICIAN, "Phy" + i.toString(),
-                                      mgmtAuthority.getRandomHospital());
-        }
-
-        // Create civilians
-        for (Integer i = 0; i < 50; ++i) {
-            mgmtAuthority.makeRequest(RequestType.NEW_PERSON, PersonType.CIVILIAN, "Civ" + i.toString());
-        }
-
-        // Issue prescriptions
-        for (Integer i = 0; i < 10; ++i) {
-            mgmtAuthority.makeRequest(RequestType.NEW_PRESCRIPTION, "Med" + i.toString(),
-                                      mgmtAuthority.getRandomPerson());
-        }
-
-        // Archive prescriptions
-        for (int i = 0; i < 3; ++i) {
-            Prescription prescription = mgmtAuthority.getRandomActivePrescription();
-            mgmtAuthority.makeRequest(RequestType.PERSON_REDEEM_PRESCRIPTION, prescription.getPrescribedTo(),
-                                      prescription);
-        }
-
-        // Kill people
-        for (int i = 0; i < 5; ++i) {
-            mgmtAuthority.makeRequest(RequestType.PERSON_DIE, mgmtAuthority.getRandomPerson());
-        }
-
-        // Infect people
-        for (int i = 0; i < 15; ++i) {
-            mgmtAuthority.makeRequest(RequestType.PERSON_SICK, mgmtAuthority.getRandomLivePerson(),
-                                      mgmtAuthority.getRandomHospital());
-        }
+//        // Create hospitals
+//        for (int i = 0; i < 3; ++i) {
+//            mgmtAuthority.makeRequest(RequestType.NEW_INSTITUTION, InstitutionType.HOSPITAL);
+//        }
+//        // Create physicians
+//        for (Integer i = 0; i < 10; ++i) {
+//            mgmtAuthority.makeRequest(RequestType.NEW_PERSON, PersonType.PHYSICIAN, "Phy" + i.toString(),
+//                                      mgmtAuthority.getRandomHospital());
+//        }
+//
+//        // Create civilians
+//        for (Integer i = 0; i < 50; ++i) {
+//            mgmtAuthority.makeRequest(RequestType.NEW_PERSON, PersonType.CIVILIAN, "Civ" + i.toString());
+//        }
+//
+//        // Issue prescriptions
+//        for (Integer i = 0; i < 10; ++i) {
+//            mgmtAuthority.makeRequest(RequestType.NEW_PRESCRIPTION, "Med" + i.toString(),
+//                                      mgmtAuthority.getRandomPerson());
+//        }
+//
+//        // Archive prescriptions
+//        for (int i = 0; i < 3; ++i) {
+//            Prescription prescription = mgmtAuthority.getRandomActivePrescription();
+//            mgmtAuthority.makeRequest(RequestType.PERSON_REDEEM_PRESCRIPTION, prescription.getPrescribedTo(),
+//                                      prescription);
+//        }
+//
+//        // Kill people
+//        for (int i = 0; i < 5; ++i) {
+//            mgmtAuthority.makeRequest(RequestType.PERSON_DIE, mgmtAuthority.getRandomPerson());
+//        }
+//
+//        // Infect people
+//        for (int i = 0; i < 15; ++i) {
+//            mgmtAuthority.makeRequest(RequestType.PERSON_SICK, mgmtAuthority.getRandomLivePerson(),
+//                                      mgmtAuthority.getRandomHospital());
+//        }
 
         Person deadPerson = mgmtAuthority.getRandomPerson();
         mgmtAuthority.makeRequest(RequestType.PERSON_DIE, deadPerson);
@@ -98,5 +112,11 @@ public class Main {
         System.out.println("After move - other hospital staff: " + hospital1.getStaff());
 
         System.out.println("Hospital patients: " + hospital.getPatients());
+
+        try {
+            dataManager.saveData();
+        } catch (IOException e) {
+            System.err.println("Failed to save data: " + e.getMessage());
+        }
     }
 }

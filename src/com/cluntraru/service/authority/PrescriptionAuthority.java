@@ -1,15 +1,12 @@
-package com.cluntraru.service.management;
+package com.cluntraru.service.authority;
 
 import com.cluntraru.model.prescription.Prescription;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class PrescriptionAuthority {
     // Key is Id
-    private Map<Integer, Prescription> prescriptions;
+    private Map<UUID, Prescription> prescriptions;
 
     PrescriptionAuthority() {
         prescriptions = new TreeMap<>();
@@ -41,8 +38,16 @@ public class PrescriptionAuthority {
         return archivedList;
     }
 
+    Prescription getPrescription(UUID uuid) {
+        if (uuid != null && prescriptions.containsKey(uuid)) {
+            return prescriptions.get(uuid);
+        }
+
+        return null;
+    }
+
     void record(Prescription prescription) {
-        if (prescriptions.containsKey(prescription.getId())) {
+        if (prescriptions.containsKey(prescription.getUUID())) {
             updateRecord(prescription);
         }
         else {
@@ -63,11 +68,11 @@ public class PrescriptionAuthority {
     }
 
     private void addPrescription(Prescription prescription) {
-        prescriptions.put(prescription.getId(), prescription);
+        prescriptions.put(prescription.getUUID(), prescription);
     }
 
     private void removePrescription(Prescription prescription) {
-        prescriptions.remove(prescription.getId());
+        prescriptions.remove(prescription.getUUID());
     }
 
     private void updatePrescription(Prescription prescription) {
