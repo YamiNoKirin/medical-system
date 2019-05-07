@@ -24,10 +24,12 @@ public class CSVDataManager implements IDataManager{
     private File prescription_csv;
 
     public CSVDataManager() {
-        models_csv = new File("./models.csv");
-        person_csv = new File("./person.csv");
-        institution_csv = new File("./institution.csv");
-        prescription_csv = new File("./prescription.csv");
+        models_csv = new File("models.csv");
+        System.out.println(models_csv.getAbsolutePath());
+        person_csv = new File("person.csv");
+        System.out.println(person_csv.getAbsolutePath());
+        institution_csv = new File("institution.csv");
+        prescription_csv = new File("prescription.csv");
     }
 
     @Override
