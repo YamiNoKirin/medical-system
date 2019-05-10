@@ -6,6 +6,7 @@ import com.cluntraru.model.person.Person;
 import com.cluntraru.model.person.PersonType;
 import com.cluntraru.model.prescription.Prescription;
 import com.cluntraru.service.authority.ManagementAuthority;
+import com.cluntraru.service.authority.RequestRunnable;
 import com.cluntraru.service.authority.RequestType;
 
 import javax.swing.*;
@@ -66,29 +67,37 @@ public class SwingManager extends JFrame {
     }
 
     private void makeRandomHospital() {
-        ManagementAuthority.getInstance().makeRequest(RequestType.NEW_INSTITUTION, InstitutionType.HOSPITAL);
+        Thread t = new Thread(new RequestRunnable(RequestType.NEW_INSTITUTION, InstitutionType.HOSPITAL));
+        t.start();
     }
 
     private void makeRandomPhysician() {
         ManagementAuthority mgmtAuthority = ManagementAuthority.getInstance();
-        mgmtAuthority.makeRequest(RequestType.NEW_PERSON, PersonType.PHYSICIAN, "Phy" + (int) Math.random() * 1000,
-                                  mgmtAuthority.getRandomHospital());
+        Thread t = new Thread(new RequestRunnable(RequestType.NEW_PERSON, PersonType.PHYSICIAN,
+                "Phy" + (int) Math.random() * 1000,
+                mgmtAuthority.getRandomHospital()));
+
+        t.start();
     }
 
     private void makeRandomCivilian() {
         ManagementAuthority mgmtAuthority = ManagementAuthority.getInstance();
-        mgmtAuthority.makeRequest(RequestType.NEW_PERSON, PersonType.CIVILIAN, "Civ" + (int) Math.random() * 1000);
+        Thread t = new Thread(new RequestRunnable(RequestType.NEW_PERSON, PersonType.CIVILIAN,
+                "Civ" + (int) Math.random() * 1000));
+        t.start();
     }
 
     private void killRandomPerson() {
         ManagementAuthority mgmtAuthority = ManagementAuthority.getInstance();
-        mgmtAuthority.makeRequest(RequestType.PERSON_DIE, mgmtAuthority.getRandomPerson());
+        Thread t = new Thread(new RequestRunnable(RequestType.PERSON_DIE, mgmtAuthority.getRandomPerson()));
+        t.start();
     }
 
     private void infectRandomPerson() {
         ManagementAuthority mgmtAuthority = ManagementAuthority.getInstance();
-        mgmtAuthority.makeRequest(RequestType.PERSON_SICK, mgmtAuthority.getRandomLivePerson(),
-                mgmtAuthority.getRandomHospital());
+        Thread t = new Thread(new RequestRunnable(RequestType.PERSON_SICK, mgmtAuthority.getRandomLivePerson(),
+                mgmtAuthority.getRandomHospital()));
+        t.start();
     }
 
     private void runDemo() {
