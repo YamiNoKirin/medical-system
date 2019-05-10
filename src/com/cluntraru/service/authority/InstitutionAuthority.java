@@ -2,83 +2,42 @@ package com.cluntraru.service.authority;
 
 import com.cluntraru.model.institution.Hospital;
 import com.cluntraru.model.institution.Institution;
+import com.cluntraru.model.person.Person;
+import com.cluntraru.service.databasemanager.JDBCManager;
 
 import java.util.*;
 
 public class InstitutionAuthority {
-    // Ordered increasingly by ID
-    private Map<UUID, Institution> institutions;
-    private Map<UUID, Hospital> hospitals;
-
-    InstitutionAuthority() {
-        institutions = new TreeMap<>();
-        hospitals = new TreeMap<>();
-    }
-
     List<Institution> getAll() {
-        return new ArrayList<>(institutions.values());
+        return JDBCManager.getInstance().getInstitutions();
     }
 
     List<Hospital> getHospitals() {
-        return new ArrayList<>(hospitals.values());
+        return JDBCManager.getInstance().getHospitals();
+    }
+
+    List<Person> getInstitutionStaff(Institution instit) {
+        return JDBCManager.getInstance().getInstitutionStaff(instit);
+    }
+
+    List<Person> getInstitutionPatients(Institution instit) {
+        return JDBCManager.getInstance().getInstitutionPatients(instit);
     }
 
     Institution getInstitution(UUID uuid) {
-        if (uuid != null && institutions.containsKey(uuid)) {
-            return institutions.get(uuid);
+        if (uuid != null) {
+            return JDBCManager.getInstance().getInstitution(uuid);
         }
 
         return null;
     }
 
     void record(Institution institution) {
-        if (institutions.containsKey(institution.getUUID())) {
-            updateRecord(institution);
+        if (JDBCManager.getInstance().getInstitution(institution.getUUID()) != null) {
+            JDBCManager.getInstance().updateInstitution(institution);
         }
         else {
-            insertRecord(institution);
+            JDBCManager.getInstance().addInstitution(institution);
         }
-    }
-
-    void eraseRecord(Institution institution) {
-        if (institution instanceof Hospital) {
-            removeHospital((Hospital) institution);
-        }
-        else {
-            throw new RuntimeException("Erased institution " + institution.toString() + " of unsupported type.");
-        }
-    }
-
-    private void updateRecord(Institution institution) {
-        if (institution instanceof Hospital) {
-            updateHospital((Hospital) institution);
-        }
-        else {
-            throw new RuntimeException("Updated institution " + institution.toString() + " of unsupported type.");
-        }
-    }
-
-    private void insertRecord(Institution institution) {
-        if (institution instanceof Hospital) {
-            addHospital((Hospital) institution);
-        }
-        else {
-            throw new RuntimeException("Inserted institution " + institution.toString() + " of unsupported type.");
-        }
-    }
-
-    private void addHospital(Hospital hospital) {
-        institutions.put(hospital.getUUID(), hospital);
-        hospitals.put(hospital.getUUID(), hospital);
-    }
-
-    private void removeHospital(Hospital hospital) {
-        institutions.remove(hospital.getUUID());
-        hospitals.remove(hospital.getUUID());
-    }
-
-    private void updateHospital(Hospital hospital) {
-        removeHospital(hospital);
-        addHospital(hospital);
     }
 }

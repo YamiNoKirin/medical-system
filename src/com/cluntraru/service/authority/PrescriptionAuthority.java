@@ -1,24 +1,20 @@
 package com.cluntraru.service.authority;
 
 import com.cluntraru.model.prescription.Prescription;
+import com.cluntraru.service.databasemanager.JDBCManager;
 
+import javax.sql.rowset.JdbcRowSet;
 import java.util.*;
 
 public class PrescriptionAuthority {
-    // Key is Id
-    private Map<UUID, Prescription> prescriptions;
-
-    PrescriptionAuthority() {
-        prescriptions = new TreeMap<>();
-    }
-
     List<Prescription> getAll() {
-        return new ArrayList<>(prescriptions.values());
+        return JDBCManager.getInstance().getIssuedPrescriptions();
     }
 
     List<Prescription> getActive() {
+        List<Prescription> prescriptions = JDBCManager.getInstance().getIssuedPrescriptions();
         List<Prescription> activeList = new ArrayList<>();
-        for (Prescription presc: prescriptions.values()) {
+        for (Prescription presc: prescriptions) {
             if (presc.getIsActive()) {
                 activeList.add(presc);
             }
@@ -28,8 +24,9 @@ public class PrescriptionAuthority {
     }
 
     List<Prescription> getArchived() {
+        List<Prescription> prescriptions = JDBCManager.getInstance().getIssuedPrescriptions();
         List<Prescription> archivedList = new ArrayList<>();
-        for (Prescription presc: prescriptions.values()) {
+        for (Prescription presc: prescriptions) {
             if (!presc.getIsActive()) {
                 archivedList.add(presc);
             }
@@ -39,44 +36,19 @@ public class PrescriptionAuthority {
     }
 
     Prescription getPrescription(UUID uuid) {
-        if (uuid != null && prescriptions.containsKey(uuid)) {
-            return prescriptions.get(uuid);
+        if (uuid == null) {
+            return null;
         }
 
-        return null;
+        return JDBCManager.getInstance().getPrescription(uuid);
     }
 
     void record(Prescription prescription) {
-        if (prescriptions.containsKey(prescription.getUUID())) {
-            updateRecord(prescription);
+        if (JDBCManager.getInstance().getPrescription(prescription.getUUID()) != null) {
+            JDBCManager.getInstance().updatePrescription(prescription);
         }
         else {
-            insertRecord(prescription);
+            JDBCManager.getInstance().addPrescription(prescription);
         }
-    }
-
-    void eraseRecord(Prescription prescription) {
-        removePrescription(prescription);
-    }
-
-    private void insertRecord(Prescription prescription) {
-        addPrescription(prescription);
-    }
-
-    private void updateRecord(Prescription prescription) {
-        updatePrescription(prescription);
-    }
-
-    private void addPrescription(Prescription prescription) {
-        prescriptions.put(prescription.getUUID(), prescription);
-    }
-
-    private void removePrescription(Prescription prescription) {
-        prescriptions.remove(prescription.getUUID());
-    }
-
-    private void updatePrescription(Prescription prescription) {
-        removePrescription(prescription);
-        addPrescription(prescription);
     }
 }

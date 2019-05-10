@@ -82,6 +82,14 @@ public final class ManagementAuthority {
         return institAuthority.getHospitals();
     }
 
+    public List<Person> getInstitutionStaff(Institution instit) {
+        return institAuthority.getInstitutionStaff(instit);
+    }
+
+    public List<Person> getInstitutionPatients(Institution instit) {
+        return institAuthority.getInstitutionPatients(instit);
+    }
+
     public Institution getInstitution(UUID uuid) {
         return institAuthority.getInstitution(uuid);
     }
@@ -153,56 +161,6 @@ public final class ManagementAuthority {
         prescAuthority.record(prescription);
     }
 
-//    private void removePerson(Person person) {
-//        try {
-//            personAuthority.eraseRecord(person);
-//        } catch (RuntimeException rte) {
-//            System.out.println(rte.getMessage());
-//        }
-//    }
-//
-//    private void removeInstitution(Institution institution) {
-//        try {
-//            institAuthority.eraseRecord(institution);
-//        } catch (RuntimeException rte) {
-//            System.out.println(rte.getMessage());
-//        }
-//    }
-//
-//    private void removePrescription(Prescription prescription) {
-//        try {
-//            prescAuthority.eraseRecord(prescription);
-//        } catch (RuntimeException rte) {
-//            // TODO (CL): proper error handling
-//            System.out.println(rte.getMessage());
-//        }
-//    }
-
-    // Loading state from datamanager
-
-    public void loadInstitution(Institution instit) {
-        recordInstitution(instit);
-    }
-
-    public void loadPerson(Person person) {
-        if (person.getInstitution() != null) {
-            recordInstitution(person.getInstitution());
-            if (person instanceof Physician && !person.isSick()) {
-                person.getInstitution().addStaff(person);
-            }
-            else {
-                person.getInstitution().addPatient(person);
-            }
-        }
-
-        recordPerson(person);
-    }
-
-    public void loadPrescription(Prescription presc) {
-        recordPerson(presc.getPrescribedTo());
-        recordPrescription(presc);
-    }
-
     // Requests
     private void newInstitution(InstitutionType institutionType) {
         Institution institution;
@@ -228,8 +186,6 @@ public final class ManagementAuthority {
             }
             else {
                 person = new Civilian(name, (Hospital) institution);
-                institution.addPatient(person);
-                recordInstitution(institution);
             }
         }
         else if (personType == PersonType.PHYSICIAN) {
@@ -238,8 +194,6 @@ public final class ManagementAuthority {
             }
 
             person = new Physician(name, (Hospital) institution);
-            institution.addStaff(person);
-            recordInstitution(institution);
         }
         else {
             throw new RuntimeException("Person type " + personType + " cannot be created.");
@@ -259,21 +213,17 @@ public final class ManagementAuthority {
         if (person instanceof Civilian) {
             person.setSick(true);
             person.setInstitution(hospital);
-            hospital.addPatient(person);
         }
         else if (person instanceof Physician) {
             // For physicians, hospital parameter is ignored, they get treated where they work
             person.setSick(true);
-            hospital.addPatient(person);
         }
 
-        recordInstitution(hospital);
         recordPerson(person);
     }
 
     private void personHeal(Person person) {
         if (person.getInstitution() != null) {
-            person.getInstitution().removePatient(person);
             recordInstitution(person.getInstitution());
         }
 
@@ -283,7 +233,6 @@ public final class ManagementAuthority {
 
     private void personDie(Person person) {
         if (person.getInstitution() != null) {
-            person.getInstitution().removePatient(person);
             recordInstitution(person.getInstitution());
         }
 
@@ -297,30 +246,21 @@ public final class ManagementAuthority {
     }
 
     private void institutionAddPatient(Institution institution, Person person) {
-        institution.addPatient(person);
         person.setInstitution(institution);
-
-        recordInstitution(institution);
         recordPerson(person);
     }
 
     private void institutionAddStaff(Institution institution, Person person) throws RuntimeException {
-        institution.addStaff(person);
         if (person.getInstitution() != null) {
             throw new RuntimeException("Cannot add person that is already employed as staff.");
         }
 
         person.setInstitution(institution);
-
-        recordInstitution(institution);
         recordPerson(person);
     }
 
     private void institutionRemoveStaff(Institution institution, Person person) {
-        institution.removeStaff(person);
         person.setInstitution(null);
-
-        recordInstitution(institution);
         recordPerson(person);
     }
 

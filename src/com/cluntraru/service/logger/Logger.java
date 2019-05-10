@@ -11,7 +11,7 @@ public class Logger {
     private File file;
 
     public Logger() {
-        file = new File("./log.csv");
+        file = new File("log.csv");
     }
 
     public void logRequest(RequestType requestType) {
