@@ -11,7 +11,6 @@ import com.cluntraru.service.authority.RequestType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class SwingManager extends JFrame {
     private static SwingManager instance;
@@ -29,7 +28,7 @@ public class SwingManager extends JFrame {
     public void init() {
         JFrame frame = new JFrame("Medical System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 100);
+        frame.setSize(1000, 200);
         frame.setLayout(new FlowLayout());
 
 
@@ -95,16 +94,24 @@ public class SwingManager extends JFrame {
         ManagementAuthority mgmtAuthority = ManagementAuthority.getInstance();
 
         JButton getPeopleButton = new JButton("Get people");
-        getPeopleButton.addActionListener(actionEvent -> System.out.println(mgmtAuthority.getPeople()));
+        getPeopleButton.addActionListener(actionEvent -> System.out.println(mgmtAuthority.getPeople().toString()));
+
+        JButton getSickButton = new JButton("Get sick people");
+        getSickButton.addActionListener(actionEvent -> System.out.println(mgmtAuthority.getSickPeople().toString()));
+
+        JButton getDeceasedButton = new JButton("Get deceased people");
+        getDeceasedButton.addActionListener(actionEvent -> System.out.println(mgmtAuthority.getDeceasedPeople().toString()));
 
         JButton getInstitutionsButton = new JButton("Get institutions");
-        getInstitutionsButton.addActionListener(actionEvent -> System.out.println(mgmtAuthority.getInstitutions()));
+        getInstitutionsButton.addActionListener(actionEvent -> System.out.println(mgmtAuthority.getInstitutions().toString()));
 
         JButton getPrescriptionsButton = new JButton("Get prescriptions");
-        getPrescriptionsButton.addActionListener(actionEvent -> System.out.println(mgmtAuthority.getIssuedPrescriptions()));
+        getPrescriptionsButton.addActionListener(actionEvent -> System.out.println(mgmtAuthority.getIssuedPrescriptions().toString()));
 
         JPanel getPanel = new JPanel();
         getPanel.add(getPeopleButton);
+        getPanel.add(getSickButton);
+        getPanel.add(getDeceasedButton);
         getPanel.add(getInstitutionsButton);
         getPanel.add(getPrescriptionsButton);
 
@@ -128,7 +135,7 @@ public class SwingManager extends JFrame {
     private void makeRandomCivilian() {
         ManagementAuthority mgmtAuthority = ManagementAuthority.getInstance();
         Thread t = new Thread(new RequestRunnable(RequestType.NEW_PERSON, PersonType.CIVILIAN,
-                "Civ" + (int) Math.random() * 1000));
+                "Civ" + (int) (Math.random() * 1000)));
         t.start();
     }
 
