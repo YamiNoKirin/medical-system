@@ -29,9 +29,39 @@ public class SwingManager extends JFrame {
     public void init() {
         JFrame frame = new JFrame("Medical System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
+        frame.setSize(1000, 100);
         frame.setLayout(new FlowLayout());
 
+
+        JPanel makePanel = initMakePanel();
+        makePanel.setVisible(true);
+
+        JPanel getPanel = initGetPanel();
+        getPanel.setVisible(false);
+
+        JButton getPanelButton = new JButton("'GET' Actions");
+        getPanelButton.addActionListener(actionEvent -> {
+            makePanel.setVisible(false);
+            getPanel.setVisible(true);
+        });
+
+        makePanel.add(getPanelButton);
+
+        JButton makePanelButton = new JButton("'Make' Actions");
+        makePanelButton.addActionListener(actionEvent -> {
+            getPanel.setVisible(false);
+            makePanel.setVisible(true);
+        });
+
+        getPanel.add(makePanelButton);
+
+        frame.add(makePanel);
+        frame.add(getPanel);
+
+        frame.setVisible(true);
+    }
+
+    private JPanel initMakePanel() {
         JButton newCivilianButton = new JButton("New civilian");
         newCivilianButton.addActionListener(actionEvent -> makeRandomCivilian());
 
@@ -50,20 +80,35 @@ public class SwingManager extends JFrame {
         JButton demoButton = new JButton("Run Demo");
         demoButton.addActionListener(actionEvent -> runDemo());
 
-        JButton changeScreenButton = new JButton("Change Screen");
-        changeScreenButton.addActionListener(actionEvent -> changeScreen());
+        JPanel makePanel = new JPanel();
+        makePanel.add(newCivilianButton);
+        makePanel.add(newPhysicianButton);
+        makePanel.add(newHospitalButton);
+        makePanel.add(killPersonButton);
+        makePanel.add(infectPersonButton);
+        makePanel.add(demoButton);
 
-        frame.getContentPane().add(demoButton);
-        frame.getContentPane().add(newHospitalButton);
-        frame.getContentPane().add(newCivilianButton);
-        frame.getContentPane().add(newPhysicianButton);
-        frame.getContentPane().add(killPersonButton);
-        frame.getContentPane().add(infectPersonButton);
-        frame.setVisible(true);
+        return makePanel;
     }
 
-    private void changeScreen() {
+    private JPanel initGetPanel() {
+        ManagementAuthority mgmtAuthority = ManagementAuthority.getInstance();
 
+        JButton getPeopleButton = new JButton("Get people");
+        getPeopleButton.addActionListener(actionEvent -> System.out.println(mgmtAuthority.getPeople()));
+
+        JButton getInstitutionsButton = new JButton("Get institutions");
+        getInstitutionsButton.addActionListener(actionEvent -> System.out.println(mgmtAuthority.getInstitutions()));
+
+        JButton getPrescriptionsButton = new JButton("Get prescriptions");
+        getPrescriptionsButton.addActionListener(actionEvent -> System.out.println(mgmtAuthority.getIssuedPrescriptions()));
+
+        JPanel getPanel = new JPanel();
+        getPanel.add(getPeopleButton);
+        getPanel.add(getInstitutionsButton);
+        getPanel.add(getPrescriptionsButton);
+
+        return getPanel;
     }
 
     private void makeRandomHospital() {
