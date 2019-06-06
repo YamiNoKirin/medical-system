@@ -1,5 +1,6 @@
 package com.cluntraru.service.authority;
 
+import com.cluntraru.model.Log;
 import com.cluntraru.model.institution.Hospital;
 import com.cluntraru.model.institution.Institution;
 import com.cluntraru.model.institution.InstitutionType;
@@ -8,8 +9,10 @@ import com.cluntraru.model.person.Person;
 import com.cluntraru.model.person.PersonType;
 import com.cluntraru.model.person.Physician;
 import com.cluntraru.model.prescription.Prescription;
+import com.cluntraru.service.databasemanager.JDBCManager;
 import com.cluntraru.service.logger.Logger;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -267,6 +270,9 @@ public final class ManagementAuthority {
     public void makeRequest(RequestType requestType, Object... args) {
         Logger logger = new Logger();
         logger.logRequest(requestType);
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Log log = new Log(UUID.randomUUID(), timestamp, requestType.toString());
+        JDBCManager.getInstance().addLog(log);
         switch (requestType) {
             case NEW_PERSON:
                 Institution institution = null;

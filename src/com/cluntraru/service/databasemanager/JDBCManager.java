@@ -1,14 +1,38 @@
+//CREATE TABLE people(
+//        PersonGUID VARCHAR(255),
+//        Name VARCHAR(255),
+//        Type VARCHAR(255),
+//        InstitutionGUID VARCHAR(255),
+//        Alive BOOLEAN,
+//        Sick BOOLEAN
+//        );
+//
+//        CREATE TABLE institutions(
+//        InstitutionGUID VARCHAR(255),
+//        Type VARCHAR(255)
+//        );
+//
+//        CREATE TABLE prescriptions(
+//        PrescriptionGUID VARCHAR(255),
+//        MedName VARCHAR(255),
+//        PatientGUID VARCHAR(255),
+//        Active BOOLEAN
+//        );
+
 package com.cluntraru.service.databasemanager;
+import com.cluntraru.model.Log;
 import com.cluntraru.model.institution.Hospital;
 import com.cluntraru.model.institution.Institution;
 import com.cluntraru.model.person.Civilian;
 import com.cluntraru.model.person.Person;
 import com.cluntraru.model.person.Physician;
 import com.cluntraru.model.prescription.Prescription;
+import org.mariadb.jdbc.internal.com.read.dao.Results;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.UUID;
 
 public class JDBCManager {
@@ -22,7 +46,7 @@ public class JDBCManager {
         return instance;
     }
 
-    private final String driver = "jdbc:mysql://localhost:3306/medical?serverTimezone=UTC";
+    private final String driver = "jdbc:mariadb://localhost:3306/medical";
     private final String user = "myusr";
     private final String passwd = "myusr";
 
@@ -86,6 +110,21 @@ public class JDBCManager {
         return null;
     }
 
+    private Log logFromResultSet(ResultSet rs){
+        try {
+            Timestamp timestamp = rs.getTimestamp("Timestamp");
+            String request = rs.getString("Request");
+            UUID uuid = UUID.fromString(rs.getString("LogGUID"));
+
+            Log log = new Log(uuid, timestamp, request);
+            return log;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return null;
+    }
+
     private Institution institutionFromResultSet(ResultSet rs) {
         try {
             String type = rs.getString("Type");
@@ -133,6 +172,22 @@ public class JDBCManager {
                             person.isAlive() + ", "+
                             person.isSick() + " " +
                             ");";
+            stmt.executeUpdate(query);
+
+            conn.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void addLog(Log log) {
+        try {
+            Connection conn = DriverManager.getConnection(driver, user, passwd);
+            Statement stmt = conn.createStatement();
+
+            String query = "INSERT INTO logs VALUES(" + "'" + log.getUUID().toString() + "', " +
+                    "'" + log.getTimestamp().toString() + "', '" +
+                    log.getRequest() + "');";
             stmt.executeUpdate(query);
 
             conn.close();
@@ -199,6 +254,25 @@ public class JDBCManager {
         }
     }
 
+    public void updateLog(Log log) {
+        try {
+            Connection conn = DriverManager.getConnection(driver, user, passwd);
+            Statement stmt = conn.createStatement();
+
+            String query = "UPDATE logs SET" +
+                    "Timestamp='" + log.getTimestamp() + "', " +
+                    "Request='" + log.getRequest() + "' " +
+                    "WHERE " +
+                    "LogGUID='" + log.getUUID() + "' " +
+                    ";";
+            stmt.executeUpdate(query);
+
+            conn.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
     public void updateInstitution(Institution instit) {
         try {
             Connection conn = DriverManager.getConnection(driver, user, passwd);
@@ -256,6 +330,31 @@ public class JDBCManager {
 
             conn.close();
             return personList;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return null;
+    }
+
+    public List<Log> getLogs() {
+        List<Log> logList = new ArrayList<>();
+        try {
+            Connection conn = DriverManager.getConnection(driver, user, passwd);
+            Statement stmt = conn.createStatement();
+
+            String query = "SELECT * FROM logs;";
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                Log log = logFromResultSet(rs);
+                if (log != null) {
+                    logList.add(log);
+                }
+            }
+
+            conn.close();
+            return logList;
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
@@ -506,5 +605,61 @@ public class JDBCManager {
         }
 
         return null;
+    }
+
+    public void deletePerson(UUID uuid) {
+        try {
+            Connection conn = DriverManager.getConnection(driver, user, passwd);
+            Statement stmt = conn.createStatement();
+
+            String query = "DELETE FROM people WHERE PersonGUID = '" + uuid.toString() + "'";
+            stmt.executeUpdate(query);
+
+            conn.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void deleteInstitution(UUID uuid) {
+        try {
+            Connection conn = DriverManager.getConnection(driver, user, passwd);
+            Statement stmt = conn.createStatement();
+
+            String query = "DELETE FROM people WHERE InsitutionGUID = '" + uuid.toString() + "'";
+            stmt.executeUpdate(query);
+
+            conn.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void deletePrescriprion(UUID uuid) {
+        try {
+            Connection conn = DriverManager.getConnection(driver, user, passwd);
+            Statement stmt = conn.createStatement();
+
+            String query = "DELETE FROM people WHERE PrescriptionGUID = '" + uuid.toString() + "'";
+            stmt.executeUpdate(query);
+
+            conn.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void deleteLog(UUID uuid) {
+        try {
+            Connection conn = DriverManager.getConnection(driver, user, passwd);
+            Statement stmt = conn.createStatement();
+
+            String query = "DELETE FROM logs WHERE LogGUID = '" + uuid.toString() + "'";
+            stmt.executeUpdate(query);
+
+            conn.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

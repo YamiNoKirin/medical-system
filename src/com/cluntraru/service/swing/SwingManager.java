@@ -8,9 +8,11 @@ import com.cluntraru.model.prescription.Prescription;
 import com.cluntraru.service.authority.ManagementAuthority;
 import com.cluntraru.service.authority.RequestRunnable;
 import com.cluntraru.service.authority.RequestType;
+import com.cluntraru.service.databasemanager.JDBCManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.UUID;
 
 public class SwingManager extends JFrame {
     private static SwingManager instance;
@@ -240,5 +242,9 @@ public class SwingManager extends JFrame {
         System.out.println("After move - other hospital staff: " + mgmtAuthority.getInstitutionStaff(hospital1));
 
         System.out.println("Hospital patients: " + mgmtAuthority.getInstitutionPatients(hospital));
+    
+//        Schimbati stringul cu UUIDul primului element pentru a vedea ca merge delete
+//        JDBCManager.getInstance().deleteLog(UUID.fromString("4b8c9164-99ea-4cb0-8fa5-162ce439f8e0"));
+        System.out.println("Logs: " + JDBCManager.getInstance().getLogs());
     }
 }
